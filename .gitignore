@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 #Statements for testing
-.pdf
+*.pdf
