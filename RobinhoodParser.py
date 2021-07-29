@@ -51,6 +51,13 @@ page.mediaBox.upperRight = (250, 612)
 page.mediaBox.upperLeft = (0, 612)
 
 print(page)
+
+output = PdfFileWriter() 
+output.addPage(page) 
+outputStream = open('result.pdf','wb') 
+output.write(outputStream) 
+outputStream.close() 
+
 #webbrowser.open(page)
 #page[]
 
