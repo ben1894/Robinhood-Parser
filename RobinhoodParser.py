@@ -1,6 +1,7 @@
 from PyPDF2.pdf import PageObject
 from tika import parser
 from PyPDF2 import PdfFileWriter,PdfFileReader,PdfFileMerger
+import os
 
 class Stock:
     name = ""
@@ -21,42 +22,44 @@ class Options:
 
 tickerNames = []
 tickerDict = {}
-   
+
+
 pdf_file = PdfFileReader(open("829234bf-09f3-4f86-aa70-731c04efd559.pdf","rb"))
-page = pdf_file.getPage(0)
+num_of_pages = pdf_file.getNumPages()
 
-print(page.cropBox.getLowerLeft())
-print(page.cropBox.getLowerRight())
-print(page.cropBox.getUpperLeft())
-print(page.cropBox.getUpperRight())
+os.system("echo Hello from the other side!")
 
-# 0, 612
-# |
-# |
-# |
-# |
-# |___________ 792, 0
+for num in range(num_of_pages):
+    print(num)
+    page = pdf_file.getPage(num)
+    page.trimBox.lowerLeft = (0, 500)
+    page.trimBox.upperRight = (250, 612)
+    page.cropBox.lowerLeft = (0, 500)
+    page.cropBox.upperRight = (250, 612)
+    output = PdfFileWriter() 
+    output.addPage(page)
+    outputStream = open('temp.pdf','wb')
+    output.write(outputStream)
+    outputStream.close()
+    os.system("\"C:/Program Files/gs/gs9.54.0/bin/gswin64c.exe\" -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=temp1.pdf temp.pdf")
+    parsed_pdf = parser.from_file("temp1.pdf")
+    data = parsed_pdf['content'] 
+    print(data)
+    print(type(data))
 
 
-# 0,0    792,0     0,612    792,612
+
+
+
 
 # 1. Crop top of page and check for string "Account Summary"
     # Store page object to list if it does
 # 2. If it exists crop and parse the rest
 # 3. If it say Executed trades pending settlement do otherwise  
 
-page.mediaBox.lowerRight = (250, 400)
-page.mediaBox.lowerLeft = (0, 400)
-page.mediaBox.upperRight = (250, 612)
-page.mediaBox.upperLeft = (0, 612)
 
-print(page)
 
-output = PdfFileWriter() 
-output.addPage(page) 
-outputStream = open('result.pdf','wb') 
-output.write(outputStream) 
-outputStream.close() 
+#last page of active or nah is weird
 
 #webbrowser.open(page)
 #page[]
@@ -79,3 +82,19 @@ outputStream.close()
   
 # <class 'str'>
 #print(type(data))
+
+
+print(page.cropBox.getLowerLeft())
+print(page.cropBox.getLowerRight())
+print(page.cropBox.getUpperLeft())
+print(page.cropBox.getUpperRight())
+
+# 0, 612
+# |
+# |
+# |
+# |
+# |___________ 792, 0
+
+
+# 0,0    792,0     0,612    792,612
