@@ -41,8 +41,9 @@ for num in range(num_of_pages):
     outputStream = open('temp.pdf','wb')
     output.write(outputStream)
     outputStream.close()
-    os.system("\"C:/Program Files/gs/gs9.54.0/bin/gswin64c.exe\" -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=temp1.pdf temp.pdf")
-    parsed_pdf = parser.from_file("temp1.pdf")
+    #os.system("\"C:/Program Files/gs/gs9.54.0/bin/gswin64c.exe\" -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=cropped.pdf temp.pdf")
+    os.system('"C:/Program Files/gs/gs9.54.0/bin/gswin64c.exe" -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=cropped.pdf -dDEVICEWIDTHPOINTS=100 -dDEVICEHEIGHTPOINTS=100 -dFIXEDMEDIA -c 24 72 translate -c 0 0 120 120 rectclip -f temp.pdf')
+    parsed_pdf = parser.from_file("cropped.pdf")
     data = parsed_pdf['content'] 
     print(data)
     print(type(data))
