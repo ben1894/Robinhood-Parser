@@ -23,31 +23,9 @@ class Options:
 tickerNames = []
 tickerDict = {}
 
-
-pdf_file = PdfFileReader(open("829234bf-09f3-4f86-aa70-731c04efd559.pdf","rb"))
-num_of_pages = pdf_file.getNumPages()
-
-os.system("echo Hello from the other side!")
-
-for num in range(num_of_pages):
-    print(num)
-    page = pdf_file.getPage(num)
-    page.trimBox.lowerLeft = (0, 500)
-    page.trimBox.upperRight = (250, 612)
-    page.cropBox.lowerLeft = (0, 500)
-    page.cropBox.upperRight = (250, 612)
-    output = PdfFileWriter() 
-    output.addPage(page)
-    outputStream = open('temp.pdf','wb')
-    output.write(outputStream)
-    outputStream.close()
-    os.system("\"C:/Program Files/gs/gs9.54.0/bin/gswin64c.exe\" -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=temp1.pdf temp.pdf")
-    parsed_pdf = parser.from_file("temp1.pdf")
-    data = parsed_pdf['content'] 
-    print(data)
-    print(type(data))
-
-
+parsed_pdf = parser.from_file("829234bf-09f3-4f86-aa70-731c04efd559.pdf")
+data = parsed_pdf['content'] 
+print(data)
 
 
 
@@ -84,10 +62,7 @@ for num in range(num_of_pages):
 #print(type(data))
 
 
-print(page.cropBox.getLowerLeft())
-print(page.cropBox.getLowerRight())
-print(page.cropBox.getUpperLeft())
-print(page.cropBox.getUpperRight())
+
 
 # 0, 612
 # |
