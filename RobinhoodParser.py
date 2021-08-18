@@ -3,19 +3,23 @@ from tika import parser
 from PyPDF2 import PdfFileWriter,PdfFileReader,PdfFileMerger
 import os
 
+#Robinhood calculates current profit based on avarage
+# updated every purchase. Turning this off would base
+# profits on individual stock buys and sells
+robinhoodStyleCalculations = True 
+
 class Transaction:
     date = ""
     buy = False
-    shareAmount = 0
+    shares = 0
     pricePerShare = 0
-    fullAmount = 0
+    totalCost = 0
 
-#profit = shares * (sell price - buy avarage)
 class Stock:
     def __init__(self, name):
         self.name = name
     shares = 0
-    _avarageCost = 0
+    avarageCost = 0
     trades = [] #List of transactions
     deltaMoney = 0
 
@@ -40,6 +44,7 @@ def call(line):
 def put(line):
     ""
 
+#profit = shares * (sell price - buy avarage)
 def regularStock(line):
     splitLine = line.split()
     stockOb = tickerDict.setdefault(splitLine[3], Stock(splitLine[3]))
@@ -48,7 +53,19 @@ def regularStock(line):
         transaction.buy = True
     else: 
         transaction.buy = False
-            
+    transaction.date = splitLine[6]
+    transaction.shares = splitLine[7]
+    transaction.pricePerShare = splitLine[8][1:]
+    transaction.totalCost = splitLine[9][1:]
+    stockOb.trades.append(transaction)
+
+    if transaction.buy == True:
+        stockOb.avarageCost = ((stockOb.avarageCost * stockOb.shares) + transaction.totalCost) / \
+                              (stockOb.shares + transaction.shares)
+        stockOb.shares += transaction.shares
+    else:
+        stockOb.shares -= transaction.shares
+        stockOb.deltaMoney += transaction.shares * (transaction.pricePerShare - stockOb.avarageCost)        
 
 
 parsed_pdf = parser.from_file("829234bf-09f3-4f86-aa70-731c04efd559.pdf")
