@@ -79,9 +79,9 @@ def regularStock(line):
     else: 
         transaction.buy = False
     transaction.date = splitLine[6]
-    transaction.shares = splitLine[7]
-    transaction.pricePerShare = splitLine[8][1:]
-    transaction.totalCost = splitLine[9][1:]
+    transaction.shares = float(splitLine[7])
+    transaction.pricePerShare = float(splitLine[8][1:])
+    transaction.totalCost = float(splitLine[9][1:])
     stockOb.trades.append(transaction)
 
     if transaction.buy == True:
@@ -95,40 +95,40 @@ def regularStock(line):
         stockOb.deltaMoney += deltaMoney     
 
 
-parsed_pdf = parser.from_file("829234bf-09f3-4f86-aa70-731c04efd559.pdf")
-data = parsed_pdf['content'] 
-print(data)
+#parsed_pdf = parser.from_file("829234bf-09f3-4f86-aa70-731c04efd559.pdf")
+#data = parsed_pdf['content'] 
+#print(data)
 
+#lines = data.splitlines() #Split lines
+#print(lines)
 
-lines = data.splitlines() #Split lines
-print(lines)
-activityPrev = lines.find("Account Activity", 0)
+lines = []
+
+#Find all location of where "Account Activity" appears
+accAcIndices = [i for i, elem in enumerate(lines) if "Account Activity" in elem]
 
 #Loops while there are more "Account Activity" strings
-while activityPrev != -1:
-    currentLinePos = activityPrev + 3 #Info starts three lines down
-    currentLine = lines[currentLinePos]
+for i in accAcIndices:
+    currentLine = lines[i + 3]
 
     #While there is more to this page and its not at the end 
     while currentLine != "" and currentLine.find("Total Funds Paid and Received") == -1:
-        if currentLine.find("Crypto Money Movement") != -1:
+        if "Crypto Money Movement" in currentLine:
             ""
-        elif currentLine.find("Cash Div") != -1:
+        elif "Cash Div" in currentLine:
             cashDiv(currentLine)
-        elif currentLine.find("Gold Fee") != -1:
+        elif "Gold Fee" in currentLine:
             goldFee(currentLine)
-        elif currentLine.find("CIL on") != -1:
+        elif "CIL on" in currentLine:
             CIL(currentLine)
-        elif currentLine.find("Call $") != -1:
+        elif "Call $" in currentLine:
             call(currentLine)
-        elif currentLine.find("Put $") != -1:
+        elif "Put $" in currentLine:
             put(currentLine)
         else:
-            currentLinePos += 1
-            regularStock(lines[currentLinePos])
+            regularStock(lines[i + 4])
     
-    activityPrev = lines.find("Account Activity", activityPrev)
-
-pendingPrev = lines.find("Executed Trades Pending Settlement", 0)
-while pendingPrev != -1:
-    pendingPrev = lines.find("Executed Trades Pending Settlement", pendingPrev)
+#Find all location of where "Executed Trades Pending Settlement" appears
+pendingIndices = [i for i, elem in enumerate(lines) if "Executed Trades Pending Settlement" in elem]
+for i in pendingIndices:
+    ""
